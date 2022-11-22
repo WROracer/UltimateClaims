@@ -34,11 +34,13 @@ public class CommandClaim extends AbstractCommand {
     protected ReturnType runCommand(CommandSender sender, String... args) {
         Player player = (Player) sender;
 
+        //Check if the World of the player is enabled
         if (Settings.DISABLED_WORLDS.getStringList().contains(player.getWorld().getName())) {
             plugin.getLocale().getMessage("command.claim.disabledworld").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
 
+        //Check if the Chunk is already claimed
         if (plugin.getClaimManager().hasClaim(player.getLocation().getChunk())) {
             plugin.getLocale().getMessage("command.general.claimed").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
@@ -54,16 +56,20 @@ public class CommandClaim extends AbstractCommand {
             return ReturnType.FAILURE;
         }
 
+        //Check if the player already has a claim
+        double cost = 0;
         if (plugin.getClaimManager().hasClaim(player)) {
             claim = plugin.getClaimManager().getClaim(player);
 
-            if (!claim.getPowerCell().hasLocation()) {
+            //check if Powercell is placed
+            if (!Settings.NEED_POWER_CELL.getBoolean()&& !claim.getPowerCell().hasLocation()) {
                 plugin.getLocale().getMessage("command.claim.nocell").sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
             }
 
             ClaimedRegion region = claim.getPotentialRegion(chunk);
 
+            //check if the new Claim is touching the old one
             if (Settings.CHUNKS_MUST_TOUCH.getBoolean() && region == null) {
                 plugin.getLocale().getMessage("command.claim.nottouching").sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
@@ -77,16 +83,31 @@ public class CommandClaim extends AbstractCommand {
                         .sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
             }
+            int claimAmount = plugin.getClaimManager().getClaims(player).size();
+            //Check if the player has enough money to buy the claim
+            cost = Settings.ECONOMY_COST.getDouble() * claimAmount;
+            //TODO: if not working
+            if (Settings.ECONOMY_ENABLED.getBoolean() && !player.hasPermission("ultimateclaims.bypass.economy")) {
+                if (!plugin.getEconomy().has(player, cost)) {
+                    plugin.getLocale().getMessage("command.claim.nomoney")
+                            .processPlaceholder("cost", cost)
+                            .sendPrefixedMessage(player);
+                    return ReturnType.FAILURE;
+                }
+                plugin.getEconomy().withdrawPlayer(player, cost);
+            }
 
             ClaimChunkClaimEvent event = new ClaimChunkClaimEvent(claim, chunk);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
+                plugin.getEconomy().depositPlayer(player, cost);
                 return ReturnType.FAILURE;
             }
 
             boolean newRegion = claim.isNewRegion(chunk);
 
             if (newRegion && claim.getClaimedRegions().size() >= Settings.MAX_REGIONS.getInt()) {
+                plugin.getEconomy().depositPlayer(player, cost);
                 plugin.getLocale().getMessage("command.claim.maxregions").sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
@@ -149,7 +170,7 @@ public class CommandClaim extends AbstractCommand {
             }
         }
 
-        plugin.getLocale().getMessage("command.claim.success").sendPrefixedMessage(sender);
+        plugin.getLocale().getMessage("command.claim.successcost").processPlaceholder("cost", cost).sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
     }
 

@@ -333,6 +333,7 @@ public class Claim {
     }
 
     public int getMaxClaimSize(Player player) {
+        //TODO: Change Size based on the Rank of the team
         return PlayerUtils.getNumberFromPermission(player, "ultimateclaims.maxclaims", Settings.MAX_CHUNKS.getInt());
     }
 

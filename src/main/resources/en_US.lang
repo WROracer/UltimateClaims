@@ -64,6 +64,7 @@ command:
     maxed: '&7This claim is at their max capacity.'
   claim:
     success: '&7You claimed this chunk for your claim.'
+    successcost: '&7You claimed this chunk for your claim. It cost´s &6%cost%&7.'
     newregion: '&aYou created a new region successfully.'
     maxregions: '&cYou cannot create anymore regions...'
     nocell: '&cYou need to create a powercell before you can claim more land...'
@@ -72,6 +73,7 @@ command:
     nottouching: '&cYou can only claim chunks that are touching each other.'
     toomany: '&cYou can only claim &4%amount% &cchunks.'
     disabledworld: '&cYou cannot do that in this world.'
+    money: '&cYou need at least &4%cost% &cto claim this chunk.'
   unclaim:
     success: '&7You unclaimed this chunk.'
     powercell: '&cYou cannot unclaim the chunk holding your powercell... Please move it first.'

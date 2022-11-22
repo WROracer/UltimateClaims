@@ -14,6 +14,11 @@ import java.util.stream.Collectors;
 public class Settings {
 
     static final Config config = UltimateClaims.getInstance().getCoreConfig();
+    public static final ConfigSetting NEED_POWER_CELL = new ConfigSetting(config, "General.NeedPowerCell", true, "If true, players will need a power cell to claim a chunk.");
+    public static final ConfigSetting ECONOMY_COST = new ConfigSetting(config,"Economy.Cost", 10.0,
+            "The cost of claiming a chunk.");
+    public static final ConfigSetting ECONOMY_ENABLED = new ConfigSetting(config, "Economy.Enabled", true,
+            "Set to true to enable economy features.");
 
     public static final ConfigSetting POWERCELL_RECIPE = new ConfigSetting(config, "Main.PowerCell Recipe",
             Collections.emptyList(),

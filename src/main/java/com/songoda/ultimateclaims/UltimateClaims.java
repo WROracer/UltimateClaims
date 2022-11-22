@@ -1,5 +1,6 @@
 package com.songoda.ultimateclaims;
 
+import com.google.gson.JsonObject;
 import com.songoda.core.SongodaCore;
 import com.songoda.core.SongodaPlugin;
 import com.songoda.core.commands.CommandManager;
@@ -29,6 +30,7 @@ import com.songoda.ultimateclaims.database.migrations._6_FlySetting;
 import com.songoda.ultimateclaims.database.migrations._7_AuditLog;
 import com.songoda.ultimateclaims.database.migrations._8_ClaimedRegions;
 import com.songoda.ultimateclaims.dynmap.DynmapManager;
+import com.songoda.ultimateclaims.econemy.EconomyUtil;
 import com.songoda.ultimateclaims.items.ItemManager;
 import com.songoda.ultimateclaims.listeners.BlockListeners;
 import com.songoda.ultimateclaims.listeners.EntityListeners;
@@ -69,6 +71,8 @@ public class UltimateClaims extends SongodaPlugin {
 
     private InviteTask inviteTask;
     private TrackerTask trackerTask;
+
+    private EconomyUtil economyManager;
 
     public static UltimateClaims getInstance() {
         return INSTANCE;
@@ -155,6 +159,8 @@ public class UltimateClaims extends SongodaPlugin {
 
         // Start our databases
         this.claimManager = new ClaimManager();
+
+        this.economyManager = new EconomyUtil();
     }
 
     @Override
@@ -291,5 +297,9 @@ public class UltimateClaims extends SongodaPlugin {
 
     public AuditManager getAuditManager() {
         return auditManager;
+    }
+
+    public EconomyUtil getEconomy() {
+        return this.economyManager;
     }
 }
